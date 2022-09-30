@@ -1,0 +1,4 @@
+festival.db
+.idea/
+*.iml
+festival_bot/__pycache__/
