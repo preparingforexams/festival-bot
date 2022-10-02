@@ -73,11 +73,11 @@ async def attend(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
 
 
 # TODO: add optional argument to pass username / festival (?)
-async def attendence(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
+async def attendance(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     telegram_user = update.effective_user
-    _attendences = FestivalAttendee.get_for_user(telegram_user.id)
+    _attendance = FestivalAttendee.get_for_user(telegram_user.id)
 
-    _festivals = "\n".join([_attendence.festival.name for _attendence in _attendences])
+    _festivals = "\n".join([_attendence.festival.name for _attendence in _attendance])
     msg = f"You're attending the following festivals:\n{_festivals}"
     await update.message.reply_text(msg)
 
@@ -125,7 +125,7 @@ def main(token: str) -> None:
     application.add_handler(CommandHandler("festivals", festivals))
     application.add_handler(CommandHandler("add", add_festival))
     application.add_handler(CommandHandler("attend", attend))
-    application.add_handler(CommandHandler("attendence", attendence))
+    application.add_handler(CommandHandler("attendance", attendance))
 
     application.run_polling()
 
