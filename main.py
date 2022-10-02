@@ -1,11 +1,10 @@
 from datetime import datetime
-from typing import TypeVar, Type
+from typing import TypeVar, Type, List, Optional
 
 import peewee
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
 
-import festival_bot
 from festival_bot import required_env, init_db, User, Festival, FestivalAttendee
 
 T = TypeVar("T")
@@ -15,8 +14,11 @@ async def unknown_command(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text("unknown command")
 
 
-def list_message_for_model(model: Type[peewee.Model], delimiter: str = "\n", empty_message: str = "Nothing here") -> str:
+def list_message_for_model(model: Type[peewee.Model], delimiter: str = "\n", empty_message: str = "Nothing here",
+                           order_by_field: Optional[peewee.Field] = None) -> str:
     results = model.select()
+    if order_by_field:
+        results = results.order_by(order_by_field)
 
     msg = delimiter.join(map(str, results))
     if not results:
