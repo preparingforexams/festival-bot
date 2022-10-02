@@ -83,6 +83,8 @@ async def attendence(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
 
 
 async def add_festival(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
+    print(update.effective_message.text)
+
     args = [arg.strip() for arg in update.effective_message.text.split("\n")[1:]]
     if len(args) < 3 or len(args) > 4:
         msg = """/add takes 3 or 4 arguments on separate lines:
