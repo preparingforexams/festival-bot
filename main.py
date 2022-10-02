@@ -15,12 +15,12 @@ async def unknown_command(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text("unknown command")
 
 
-def list_message_for_model(model: peewee.Model) -> str:
+def list_message_for_model(model: peewee.Model, delimiter: str = "\n", empty_message: str = "Nothing here") -> str:
     results = model.select()
 
-    msg = "\n".join(map(str, results))
+    msg = delimiter.join(map(str, results))
     if not results:
-        msg = "Nothing here"
+        msg = empty_message
 
     return msg
 
