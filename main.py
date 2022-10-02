@@ -82,7 +82,11 @@ async def attendance(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     _attendance = FestivalAttendee.get_for_user(telegram_user.id)
 
     _festivals = "\n".join([_attendence.festival.name for _attendence in _attendance])
-    msg = f"You're attending the following festivals:\n{_festivals}"
+    if _festivals:
+        msg = f"You're attending the following festivals:\n{_festivals}"
+    else:
+        msg = "You're not attending any festivals yet"
+
     await update.message.reply_text(msg)
 
 
