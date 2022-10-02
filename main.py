@@ -18,7 +18,7 @@ async def unknown_command(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
 async def users(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     _users = User.select()
 
-    msg = ", ".join(map(str, _users))
+    msg = "\n".join(map(str, _users))
     if not _users:
         msg = "There are no users yet"
 
@@ -28,7 +28,7 @@ async def users(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
 async def festivals(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     _festivals = Festival.select()
 
-    msg = ", ".join(map(str, _festivals))
+    msg = "\n".join(map(str, _festivals))
     if not _festivals:
         msg = "There are no festivals yet"
 
