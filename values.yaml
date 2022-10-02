@@ -1,0 +1,31 @@
+namespace: telegram-bots
+
+deployment:
+  name: festivalbot
+  image: ghcr.io/preparingforexams/festival-bot:__TAG__
+  imagePullPolicy: IfNotPresent
+  revisionHistoryLimit: 1
+  replicas: 1
+  labels:
+    app: festivalbot
+  requests:
+    cpu: 100m
+    memory: 100Mi
+  updateStrategy: Recreate
+
+volume:
+  name: festivalbot-state
+  path: /data
+
+claim:
+  name: festivalbot-state
+  size: 1Gi
+  accessMode: ReadWriteOnce
+
+secret:
+  name: festivalbot-telegram-token
+  password: __TELEGRAM_TOKEN__
+
+configmap:
+  name: festivalbot
+  sqlite_database_filename: festivals.db
