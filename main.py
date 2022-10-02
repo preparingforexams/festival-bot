@@ -101,6 +101,9 @@ async def add_festival(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
         else:
             link = None
 
+        # TODO: handle update
+        #       -> `peewee.IntegrityError` is thrown when festival any parameter is different than on first insertion
+        #       -> maybe an update command? (`/update {festival_name} {key} {value}`)
         festival, new = Festival.get_or_create(name=name, start=start, end=end, link=link)
 
         if new:
