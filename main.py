@@ -96,8 +96,10 @@ async def add_festival(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
         name = args[0]
         # TODO: use 2023 as default only
         # TODO: read default from environment
-        start = datetime.strptime(f"{args[1]}.2023", "%d.%m.%Y")
-        end = datetime.strptime(f"{args[2]}.2023", "%d.%m.%Y")
+        start = args[1].rstrip(".")
+        start = datetime.strptime(f"{start}.2023", "%d.%m.%Y")
+        end = args[2].rstrip(".")
+        end = datetime.strptime(f"{end}.2023", "%d.%m.%Y")
         if len(args) > 3:
             link = args[3].strip()
         else:
