@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import TypeVar
+from typing import TypeVar, Type
 
 import peewee
 from telegram import Update
@@ -15,7 +15,7 @@ async def unknown_command(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text("unknown command")
 
 
-def list_message_for_model(model: peewee.Model, delimiter: str = "\n", empty_message: str = "Nothing here") -> str:
+def list_message_for_model(model: Type[peewee.Model], delimiter: str = "\n", empty_message: str = "Nothing here") -> str:
     results = model.select()
 
     msg = delimiter.join(map(str, results))
