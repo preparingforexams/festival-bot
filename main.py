@@ -15,22 +15,24 @@ async def unknown_command(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text("unknown command")
 
 
-async def users(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
-    _users = User.select()
+def list_message_for_model(model: peewee.Model) -> str:
+    results = model.select()
 
-    msg = "\n".join(map(str, _users))
-    if not _users:
-        msg = "There are no users yet"
+    msg = "\n".join(map(str, results))
+    if not results:
+        msg = "Nothing here"
+
+    return msg
+
+
+async def users(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
+    msg = list_message_for_model(User)
 
     await update.message.reply_text(msg)
 
 
 async def festivals(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
-    _festivals = Festival.select()
-
-    msg = "\n".join(map(str, _festivals))
-    if not _festivals:
-        msg = "There are no festivals yet"
+    msg = list_message_for_model(Festival)
 
     await update.message.reply_text(msg)
 
