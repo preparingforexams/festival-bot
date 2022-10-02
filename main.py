@@ -1,9 +1,10 @@
+import sys
 from datetime import datetime
-from typing import TypeVar, Type, List, Optional
+from typing import TypeVar, Type, Optional
 
 import peewee
 from telegram import Update
-from telegram.ext import Application, CommandHandler, ContextTypes
+from telegram.ext import Application, ContextTypes, MessageHandler, filters
 
 from festival_bot import required_env, init_db, User, Festival, FestivalAttendee
 
@@ -48,7 +49,6 @@ async def login(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
         user.save()
     else:
         msg = "You've already been logged in"
-
     await update.message.reply_text(msg)
 
 
@@ -90,7 +90,7 @@ async def attendance(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(msg)
 
 
-async def add_festival(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
+async def add(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     print(update.effective_message.text)
 
     args = [arg.strip() for arg in update.effective_message.text.split("\n")[1:]]
@@ -127,15 +127,21 @@ async def add_festival(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(msg)
 
 
+async def base_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    text = update.effective_message.text
+    command = text.split()[0].lstrip("/")
+
+    try:
+        await getattr(sys.modules[__name__], command)(update, context)
+    except Exception as e:
+        await update.message.reply_text(f"unexpected error occured:\n{str(e)}")
+
+
 def main(token: str) -> None:
     init_db()
     application = Application.builder().token(token).build()
-    application.add_handler(CommandHandler("login", login))
-    application.add_handler(CommandHandler("users", users))
-    application.add_handler(CommandHandler("festivals", festivals))
-    application.add_handler(CommandHandler("add", add_festival))
-    application.add_handler(CommandHandler("attend", attend))
-    application.add_handler(CommandHandler("attendance", attendance))
+
+    application.add_handler(MessageHandler(filters.COMMAND, base_command))
 
     application.run_polling()
 
