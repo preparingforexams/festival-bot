@@ -1,4 +1,3 @@
-import datetime
 from typing import List
 
 import peewee
@@ -18,6 +17,8 @@ class Festival(peewee.Model):
     name = TextField(unique=True)
     start = DateTimeField()
     end = DateTimeField()
+    link = TextField(unique=True, null=True)
+
     date_format = "%d.%m"
 
     class Meta:

@@ -84,19 +84,24 @@ async def attendence(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
 
 async def add_festival(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     args = [arg.strip() for arg in update.effective_message.text.split("\n")[1:]]
-    if len(args) != 3:
-        msg = """/add takes exactly 3 arguments on separate lines:
+    if len(args) < 3 or len(args) > 4:
+        msg = """/add takes 3 or 4 arguments on separate lines:
 {festival name}
 {start date (day.month)}
-{end date (day.month)}"""
+{end date (day.month)}
+[{link}]"""
     else:
         name = args[0]
         # TODO: use 2023 as default only
         # TODO: read default from environment
         start = datetime.strptime(f"{args[1]}.2023", "%d.%m.%Y")
         end = datetime.strptime(f"{args[2]}.2023", "%d.%m.%Y")
+        if len(args) > 3:
+            link = args[3].strip()
+        else:
+            link = None
 
-        festival, new = Festival.get_or_create(name=name, start=start, end=end)
+        festival, new = Festival.get_or_create(name=name, start=start, end=end, link=link)
 
         if new:
             festival.save()
