@@ -36,7 +36,7 @@ async def users(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
 async def festivals(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     msg = list_message_for_model(Festival, order_by_field=Festival.start)
 
-    await update.message.reply_text(msg)
+    await update.message.reply_text(msg, disable_web_page_preview=True)
 
 
 async def login(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
