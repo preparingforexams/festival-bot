@@ -131,6 +131,7 @@ async def base_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     try:
         text = update.effective_message.text
         command = text.split()[0].lstrip("/")
+        command = command.split("@")[0]
         await getattr(sys.modules[__name__], command)(update, context)
     except Exception as e:
         await update.message.reply_text(f"unexpected error occured:\n{str(e)}")
