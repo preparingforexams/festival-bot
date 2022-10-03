@@ -31,8 +31,13 @@ class Festival(peewee.Model):
         # noinspection PyUnresolvedReferences
         end = self.end.strftime(self.date_format)
 
-        link = f" {self.link}" if self.link else ""
-        return f"{self.name} ({start} - {end}){link}"
+        link = self.link
+        if link:
+            name = f"[{self.name}]({link})"
+        else:
+            name = self.name
+
+        return f"{name} ({start} - {end})"
 
 
 class User(peewee.Model):
