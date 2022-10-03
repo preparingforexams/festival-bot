@@ -3,6 +3,7 @@ from typing import TypeVar, Type, Optional
 
 import peewee
 from telegram import Update
+from telegram.constants import ParseMode
 from telegram.ext import Application, ContextTypes, CommandHandler
 
 from festival_bot import required_env, init_db, User, Festival, FestivalAttendee
@@ -35,7 +36,7 @@ async def users(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
 async def festivals(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     msg = list_message_for_model(Festival, order_by_field=Festival.start)
 
-    await update.message.reply_text(msg, disable_web_page_preview=True)
+    await update.message.reply_text(msg, disable_web_page_preview=True, parse_mode=ParseMode.MARKDOWN_V2)
 
 
 @command
