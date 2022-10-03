@@ -5,12 +5,16 @@ import peewee
 # noinspection PyPackageRequirements
 import telegram
 
-from . import User, Festival, FestivalAttendee
+from .models import AttendanceStatus, Festival, FestivalAttendee, User
 from .utils import list_message_for_model
 
 
 def get_or_create(model: Type[peewee.Model], **kwargs):
     return model.get_or_create(**kwargs)
+
+
+def delete(model: Type[peewee.Model], *expressions) -> int:
+    return model.delete().where(*expressions).execute()
 
 
 def login(user: telegram.User):
@@ -44,5 +48,10 @@ def get_festival_attendee(*, festival: Optional[Festival], user: Optional[telegr
     return attendee
 
 
-def attend(festival: Festival, user: telegram.User) -> Tuple[FestivalAttendee, bool]:
-    return get_or_create(FestivalAttendee, festival_id=festival.get_id(), telegram_id=user.id)
+def attend(festival: Festival, user: telegram.User, status: AttendanceStatus) -> int | Tuple[FestivalAttendee, bool]:
+    match status:
+        case AttendanceStatus.NO:
+            return delete(FestivalAttendee,
+                          FestivalAttendee.festival == festival.get_id(),
+                          FestivalAttendee.telegram == user.id)
+    return get_or_create(FestivalAttendee, festival_id=festival.get_id(), telegram_id=user.id, status=status.value)
