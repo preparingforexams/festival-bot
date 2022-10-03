@@ -121,7 +121,7 @@ async def add_festival(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
         else:
             msg = f"{festival} already exists"
 
-    await update.message.reply_text(msg, disable_web_page_preview=True)
+    await update.message.reply_text(msg, disable_web_page_preview=True, parse_mode=ParseMode.MARKDOWN_V2)
 
 
 def main(token: str) -> None:
