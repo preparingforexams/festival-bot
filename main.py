@@ -73,7 +73,7 @@ async def attend(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
         except peewee.DoesNotExist:
             msg = f"{festival_query} was not found in festivals (execute `/festivals` to list available festivals)"
 
-    await update.message.reply_text(msg)
+    await update.message.reply_text(msg, disable_web_page_preview=True)
 
 
 # TODO: add optional argument to pass username / festival (?)
@@ -124,7 +124,7 @@ async def add(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
         else:
             msg = f"{festival} already exists"
 
-    await update.message.reply_text(msg)
+    await update.message.reply_text(msg, disable_web_page_preview=True)
 
 
 async def base_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
