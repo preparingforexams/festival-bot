@@ -73,7 +73,7 @@ async def attend(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
         except peewee.DoesNotExist:
             msg = f"{festival_query} was not found in festivals (execute `/festivals` to list available festivals)"
 
-    await update.message.reply_text(msg, disable_web_page_preview=True)
+    await update.message.reply_text(msg, disable_web_page_preview=True, parse_mode=ParseMode.MARKDOWN_V2)
 
 
 @command
