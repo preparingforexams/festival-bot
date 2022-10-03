@@ -1,39 +1,26 @@
 from datetime import datetime
-from typing import TypeVar, Type, Optional
+from typing import TypeVar
 
 import peewee
 from telegram import Update
 from telegram.ext import Application, ContextTypes, CommandHandler
 
-from festival_bot import required_env, init_db, User, Festival, FestivalAttendee
+from festival_bot import required_env, init_db, commands
 from festival_bot.decorator import command
 
 T = TypeVar("T")
 
 
-def list_message_for_model(model: Type[peewee.Model], delimiter: str = "\n", empty_message: str = "Nothing here",
-                           order_by_field: Optional[peewee.Field] = None) -> str:
-    results = model.select()
-    if order_by_field:
-        results = results.order_by(order_by_field)
-
-    msg = delimiter.join(map(str, results))
-    if not results:
-        msg = empty_message
-
-    return msg
-
-
 @command
 async def users(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
-    msg = list_message_for_model(User)
+    msg = commands.users()
 
     await update.message.reply_text(msg)
 
 
 @command
 async def festivals(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
-    msg = list_message_for_model(Festival, order_by_field=Festival.start)
+    msg = commands.festivals()
 
     await update.message.reply_text(msg, disable_web_page_preview=True)
 
@@ -41,7 +28,7 @@ async def festivals(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
 @command
 async def login(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     telegram_user = update.effective_user
-    user, new = User.get_or_create(telegram_id=telegram_user.id, name=telegram_user.full_name)
+    user, new = commands.login(telegram_user)
 
     if new:
         msg = f"Successfully logged into festival bot {telegram_user.full_name}"
@@ -60,15 +47,14 @@ async def attend(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     else:
         try:
             # `**` is ILIKE (https://docs.peewee-orm.com/en/latest/peewee/query_operators.html#query-operators)
-            festival = Festival.get(Festival.name ** festival_query)
-            attendee, new = FestivalAttendee.get_or_create(festival_id=festival.get_id(), telegram_id=telegram_user.id)
+            festival = commands.get_festival(festival_query)
+            attendee, new = commands.attend(festival, telegram_user)
 
             if new:
                 attendee.save()
                 msg = f"You're now attending {festival}"
             else:
                 msg = f"You're already attending {festival}"
-
         except peewee.DoesNotExist:
             msg = f"{festival_query} was not found in festivals (execute `/festivals` to list available festivals)"
 
@@ -78,7 +64,7 @@ async def attend(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
 @command
 async def attendance(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     telegram_user = update.effective_user
-    _attendance = FestivalAttendee.get_for_user(telegram_user.id)
+    _attendance = commands.get_festival_attendee(festival=None, user=telegram_user)
 
     _festivals = "\n".join([_attendence.festival.name for _attendence in _attendance])
     if _festivals:
@@ -112,7 +98,7 @@ async def add_festival(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
         # TODO: handle update
         #       -> `peewee.IntegrityError` is thrown when festival any parameter is different than on first insertion
         #       -> maybe an update command? (`/update {festival_name} {key} {value}`)
-        festival, new = Festival.get_or_create(name=name, start=start, end=end, link=link)
+        festival, new = commands.add_festival(name=name, start=start, end=end, link=link)
 
         if new:
             festival.save()
