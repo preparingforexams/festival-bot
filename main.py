@@ -26,19 +26,6 @@ async def festivals(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
 
 
 @command
-async def login(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
-    telegram_user = update.effective_user
-    user, new = commands.login(telegram_user)
-
-    if new:
-        msg = f"Successfully logged into festival bot {telegram_user.full_name}"
-        user.save()
-    else:
-        msg = "You've already been logged in"
-    await update.message.reply_text(msg)
-
-
-@command
 async def attend(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     telegram_user = update.effective_user
     festival_query = " ".join([arg.strip() for arg in update.effective_message.text.split(" ")[1:]])
@@ -113,7 +100,6 @@ def main(token: str) -> None:
     init_db()
     application = Application.builder().token(token).build()
 
-    application.add_handler(CommandHandler("login", login))
     application.add_handler(CommandHandler("users", users))
     application.add_handler(CommandHandler("festivals", festivals))
     application.add_handler(CommandHandler("add", add_festival))
