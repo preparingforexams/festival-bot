@@ -15,14 +15,14 @@ T = TypeVar("T")
 async def users(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     msg = commands.users()
 
-    await update.message.reply_text(msg)
+    await update.message.reply_text(msg, disable_notification=True)
 
 
 @command
 async def festivals(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     msg = commands.festivals()
 
-    await update.message.reply_text(msg, disable_web_page_preview=True)
+    await update.message.reply_text(msg, disable_web_page_preview=True, disable_notification=True)
 
 
 @command
@@ -58,7 +58,7 @@ async def attend(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
         except peewee.DoesNotExist:
             msg = f"{festival_query} was not found in festivals (execute `/festivals` to list available festivals)"
 
-    await update.message.reply_text(msg, disable_web_page_preview=True)
+    await update.message.reply_text(msg, disable_web_page_preview=True, disable_notification=True)
 
 
 @command
@@ -72,7 +72,7 @@ async def attendance(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     else:
         msg = "You're not attending any festivals yet"
 
-    await update.message.reply_text(msg)
+    await update.message.reply_text(msg, disable_notification=True)
 
 
 @command
@@ -106,7 +106,7 @@ async def add_festival(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
         else:
             msg = f"{festival} already exists"
 
-    await update.message.reply_text(msg, disable_web_page_preview=True)
+    await update.message.reply_text(msg, disable_web_page_preview=True, disable_notification=True)
 
 
 def main(token: str) -> None:
