@@ -1,6 +1,8 @@
 import os
 
-from typing import TypeVar, Callable
+from typing import TypeVar, Callable, Type, Optional
+
+import peewee
 
 T = TypeVar("T")
 
@@ -18,3 +20,16 @@ def required_env(key: str, conversion_func: Callable[[str], T] = str) -> T:
         return conversion_func(os.environ.get(key))
 
     raise ValueError(f"`{key}` not found in environment")
+
+
+def list_message_for_model(model: Type[peewee.Model], delimiter: str = "\n", empty_message: str = "Nothing here",
+                           order_by_field: Optional[peewee.Field] = None) -> str:
+    results = model.select()
+    if order_by_field:
+        results = results.order_by(order_by_field)
+
+    msg = delimiter.join(map(str, results))
+    if not results:
+        msg = empty_message
+
+    return msg
