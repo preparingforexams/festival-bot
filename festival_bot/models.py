@@ -86,7 +86,7 @@ class AttendanceStatus(Enum):
 class FestivalAttendee(peewee.Model):
     festival = ForeignKeyField(Festival, to_field="id")
     telegram = ForeignKeyField(User, to_field="telegram_id")
-    status = IntegerField(default=AttendanceStatus.YES)
+    status = IntegerField(default=AttendanceStatus.YES.value)
 
     class Meta:
         database = db
