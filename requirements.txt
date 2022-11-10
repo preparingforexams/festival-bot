@@ -1,2 +1,4 @@
 python-telegram-bot==20.0a4
-peewee==3.15.3
+pydantic==1.10.2
+requests==2.28.1
+python-Levenshtein==0.20.6

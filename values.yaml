@@ -29,3 +29,9 @@ secret:
 configmap:
   name: festivalbot
   sqlite_database_filename: festivals.db
+
+service:
+  name: festival-api
+  externalName: festival-api.festival.svc.cluster.local
+  ports:
+    - 80

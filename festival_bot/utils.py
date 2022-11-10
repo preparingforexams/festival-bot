@@ -1,8 +1,10 @@
+import inspect
 import os
+from datetime import datetime
 
-from typing import TypeVar, Callable, Type, Optional
+from typing import TypeVar, Callable, List, Optional
 
-import peewee
+from .logger import create_logger
 
 T = TypeVar("T")
 
@@ -22,14 +24,28 @@ def required_env(key: str, conversion_func: Callable[[str], T] = str) -> T:
     raise ValueError(f"`{key}` not found in environment")
 
 
-def list_message_for_model(model: Type[peewee.Model], delimiter: str = "\n", empty_message: str = "Nothing here",
-                           order_by_field: Optional[peewee.Field] = None) -> str:
-    results = model.select()
-    if order_by_field:
-        results = results.order_by(order_by_field)
+def parse_date(date_string: str, date_formats: List[str] = None, default_year: int = 2023) -> Optional[datetime]:
+    log = create_logger(inspect.currentframe().f_code.co_name)
 
-    msg = delimiter.join(map(str, results))
-    if not results:
-        msg = empty_message
+    date = None
+    if date_formats is None:
+        date_formats = ["%d.%m", "%d.%m.%Y"]
 
-    return msg
+    for date_format in date_formats:
+        log.debug(f"try formatting ({date}) with {date_format}")
+
+        try:
+            date = datetime.strptime(date_string, date_format)
+        except ValueError:
+            log.error(f"couldn't parse date ({date}) with {date_format}", exc_info=True)
+            pass
+
+    if date:
+        log.debug("successfully parsed date")
+        if date.year == 1900:
+            log.debug(f"year of parsed datetime object is 1900 -> set to default year ({default_year})")
+            date = date.replace(year=default_year)
+    else:
+        log.error(f"couldn't parse date ({date} with any of ({date_formats})")
+
+    return date

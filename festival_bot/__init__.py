@@ -1,2 +1,2 @@
-from .models import Festival, User, FestivalAttendee, init_db, migrate_db
+from .models import Festival, User, FestivalAttendee
 from .utils import required_env
