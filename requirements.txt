@@ -1,2 +1,2 @@
 python-telegram-bot==20.0a4
-peewee==3.15.3
+peewee==3.15.4
